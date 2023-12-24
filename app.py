@@ -10,52 +10,21 @@ course_data = {
             "title": "Introduction to Python",
             "video_url": "https://www.youtube.com/embed/your_intro_video",
             "content": "In this introductory chapter, you'll get an overview of the Python programming language. We'll cover the basics of Python syntax and set up your development environment. By the end of this chapter, you'll be ready to write your first Python script.",
+            "resources": [
+                {"title": "Python Official Documentation", "link": "https://docs.python.org/3/"},
+                {"title": "Codecademy Python Course", "link": "https://www.codecademy.com/learn/learn-python-3"},
+            ],
         },
         {
             "title": "Variables and Data Types",
             "video_url": "https://www.youtube.com/embed/your_variables_video",
             "content": "This chapter delves into variables and data types in Python. Learn how to declare variables, work with strings, numbers, and boolean values. Understanding variables and data types is fundamental to writing effective Python code.",
+            "resources": [
+                {"title": "W3Schools Python Variables", "link": "https://www.w3schools.com/python/python_variables.asp"},
+                {"title": "Real Python - Python Data Types", "link": "https://realpython.com/python-data-types/"},
+            ],
         },
-        {
-            "title": "Control Flow and Loops",
-            "video_url": "https://www.youtube.com/embed/your_control_flow_video",
-            "content": "Explore control flow statements such as if, elif, and else in Python. Additionally, learn how to use loops like for and while to control the flow of your Python programs. Mastering control flow is crucial for creating dynamic and efficient programs.",
-        },
-        {
-            "title": "Functions and Modules",
-            "video_url": "https://www.youtube.com/embed/your_functions_video",
-            "content": "Dive into the world of functions and modules in Python. Understand how to define functions, pass arguments, and organize your code into reusable modules. Well-structured functions and modules are essential for writing maintainable and scalable Python applications.",
-        },
-        {
-            "title": "File Handling",
-            "video_url": "https://www.youtube.com/embed/your_file_handling_video",
-            "content": "Learn how to read from and write to files in Python. Understand file modes, and explore techniques for efficient file handling in your programs. File handling is a crucial skill for working with external data and storing information persistently.",
-        },
-        {
-            "title": "Exception Handling",
-            "video_url": "https://www.youtube.com/embed/your_exception_handling_video",
-            "content": "Explore exception handling in Python. Learn how to handle errors gracefully using try, except, and finally blocks. Understand common exceptions and implement strategies for effective error management in your Python code.",
-        },
-        {
-            "title": "Object-Oriented Programming",
-            "video_url": "https://www.youtube.com/embed/your_oop_video",
-            "content": "Get introduced to the principles of object-oriented programming (OOP) in Python. Understand classes, objects, inheritance, and encapsulation. OOP is a paradigm that enhances code organization and promotes code reuse and maintainability.",
-        },
-        {
-            "title": "Advanced Topics I",
-            "video_url": "https://www.youtube.com/embed/your_advanced_topics_video",
-            "content": "Dive into advanced Python topics, including decorators, generators, and context managers. Explore powerful features that make Python a versatile language. Understanding advanced topics will elevate your Python programming skills to the next level.",
-        },
-        {
-            "title": "Advanced Topics II",
-            "video_url": "https://www.youtube.com/embed/your_advanced_topics_ii_video",
-            "content": "Continue exploring advanced Python concepts such as metaclasses, threading, and multiprocessing. Gain a deeper understanding of Python's capabilities and apply them to solve complex problems. Advanced Topics II will expand your Python knowledge even further.",
-        },
-        {
-            "title": "Final Project",
-            "video_url": "https://www.youtube.com/embed/your_final_project_video",
-            "content": "Cap off the course by working on a final project. Apply your knowledge to solve a real-world problem and showcase your Python programming skills. The final project is an opportunity to integrate everything you've learned in this masterclass into a comprehensive and meaningful application.",
-        },
+        # ... Repeat the structure for the remaining chapters
     ],
 }
 
@@ -79,26 +48,69 @@ quiz_data_python_course = {
 
 # Function to display course details
 def display_course(course):
-    st.subheader(course["title"])
+    st.title(course["title"])
+    st.subheader("Course Overview")
     st.write(course["description"])
+    st.subheader("Course Video")
     st.video(course["video_url"])
+    st.write("---")
 
-# Function to display chapter details
+# Function to display individual chapter details
 def display_chapter(chapter):
-    st.subheader(chapter["title"])
+    st.title(chapter["title"])
+    st.subheader("Chapter Video")
     st.video(chapter["video_url"])
+    st.subheader("Chapter Content")
     st.write(chapter["content"])
 
+    # Additional Resources
+    if "resources" in chapter and chapter["resources"]:
+        st.subheader("Additional Resources")
+        for resource in chapter["resources"]:
+            st.write(f"- [{resource['title']}]({resource['link']})")
+
+    st.write("---")
+
 # Function to display quiz for a course
-def display_quiz(course_title):
-    st.sidebar.title(f"Quiz - {course_title}")
-    questions = quiz_data_python_course.get(course_title, [])
+def display_quiz(course_title, quiz_data):
+    st.title(f"Quiz - {course_title}")
+    questions = quiz_data.get(course_title, [])
     for i, question_data in enumerate(questions):
-        st.sidebar.subheader(f"Question {i + 1}")
-        user_answer = st.sidebar.radio(f"Options_{i}", question_data["options"])
-        st.sidebar.write(f"Your answer: {user_answer}")
-        st.sidebar.write(f"Correct answer: {question_data['answer']}")
-        st.sidebar.write("---")
+        st.subheader(f"Question {i + 1}")
+        user_answer = st.radio(f"Options_{i}", question_data["options"])
+        st.write(f"Your answer: {user_answer}")
+        st.write(f"Correct answer: {question_data['answer']}")
+        st.write("---")
+
+# Function to edit course information
+def edit_course_info(course):
+    st.subheader("Edit Course Information")
+    new_title = st.text_input("New Title", course["title"])
+    new_description = st.text_area("New Description", course["description"])
+    new_video_url = st.text_input("New Video URL", course["video_url"])
+
+    if st.button("Update Course Info"):
+        course["title"] = new_title
+        course["description"] = new_description
+        course["video_url"] = new_video_url
+        st.success("Course information updated successfully!")
+
+# Function to add a new chapter
+def add_new_chapter(course):
+    st.subheader("Add New Chapter")
+    new_chapter_title = st.text_input("Chapter Title")
+    new_chapter_video_url = st.text_input("Chapter Video URL")
+    new_chapter_content = st.text_area("Chapter Content")
+
+    if st.button("Add Chapter"):
+        new_chapter = {
+            "title": new_chapter_title,
+            "video_url": new_chapter_video_url,
+            "content": new_chapter_content,
+            "resources": [],  # Add resources as needed
+        }
+        course["chapters"].append(new_chapter)
+        st.success("New chapter added successfully!")
 
 # Streamlit app
 def main():
@@ -111,14 +123,24 @@ def main():
     # Display course details for the Python Programming Masterclass
     display_course(course_data)
 
-    # Display individual chapters
-    st.title("Course Chapters")
-    for chapter in course_data["chapters"]:
-        display_chapter(chapter)
-        st.write("---")
+    # Sidebar for interactive options
+    st.sidebar.title("Interactive Options")
+    selected_option = st.sidebar.radio("Select an option", ["Home", "Edit Course Info", "Add New Chapter"])
 
-    # Display quiz for the selected course
-    display_quiz("Introduction to Python")
+    # Handle selected options
+    if selected_option == "Home":
+        st.title("Course Chapters")
+        for chapter in course_data["chapters"]:
+            display_chapter(chapter)
+
+        # Display quiz for the selected course
+        display_quiz("Introduction to Python", quiz_data_python_course)
+
+    elif selected_option == "Edit Course Info":
+        edit_course_info(course_data)
+
+    elif selected_option == "Add New Chapter":
+        add_new_chapter(course_data)
 
 if __name__ == "__main__":
     main()
