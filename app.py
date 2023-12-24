@@ -157,6 +157,25 @@ def login_simulation():
 
     return username
 
+# Function to simulate user registration and login with hashed password
+def secure_login_simulation():
+    fake = Faker()
+    username = fake.user_name()
+    password = fake.password()
+
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+    st.sidebar.subheader("User Login (Secure)")
+    st.sidebar.text_input("Username", value=username, key="username", disabled=True)
+    st.sidebar.text_input("Password", value=hashed_password, key="password", disabled=True)
+
+    return username
+
+# Function to display course enrollment
+def enroll_user():
+    st.sidebar.subheader("Enroll in Course")
+    st.sidebar.button("Enroll Now")
+
 # Streamlit app
 def main():
     st.set_page_config(
@@ -177,7 +196,7 @@ def main():
 
     # Sidebar for interactive options
     st.sidebar.title("Interactive Options")
-    selected_option = st.sidebar.radio("Select an option", ["Home", "Take Quiz"])
+    selected_option = st.sidebar.radio("Select an option", ["Home", "Take Quiz", "Secure Login", "Enroll"])
 
     # Handle selected options
     if selected_option == "Home":
@@ -190,5 +209,13 @@ def main():
         user_answers = user_quiz_answers.get(selected_chapter, {})
         user_quiz_answers = display_quiz(selected_chapter, quiz_data_python_course, user_answers)
 
+    elif selected_option == "Secure Login":
+        secure_user = secure_login_simulation()
+        st.success(f"Secure login successful. Welcome, {secure_user}!")
+
+    elif selected_option == "Enroll":
+        enroll_user()
+
 if __name__ == "__main__":
     main()
+
