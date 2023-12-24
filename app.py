@@ -208,6 +208,40 @@ def enroll_user():
         st.sidebar.success(f"You are now enrolled in the course: {selected_course}.")
         user_database[user]["enrolled_courses"].append(selected_course)
 
+# Function to add a new course
+def add_new_course():
+    st.sidebar.subheader("Add New Course")
+    new_course_title = st.sidebar.text_input("Course Title")
+    new_course_description = st.sidebar.text_area("Course Description")
+    new_course_video_url = st.sidebar.text_input("Course Video URL")
+    new_course_chapters = st.sidebar.slider("Number of Chapters", 1, 20, 5)
+
+    new_course_data = {
+        "title": new_course_title,
+        "description": new_course_description,
+        "video_url": new_course_video_url,
+        "chapters": [],
+    }
+
+    for i in range(new_course_chapters):
+        chapter_title = f"Chapter {i + 1} - {new_course_title}"
+        chapter_video_url = f"https://www.youtube.com/embed/chapter_{i + 1}_video"
+        chapter_content = f"This is the content for Chapter {i + 1} of the course {new_course_title}."
+        new_course_data["chapters"].append({
+            "title": chapter_title,
+            "video_url": chapter_video_url,
+            "content": chapter_content,
+            "resources": [],
+        })
+
+    # Display the new course data (for demonstration purposes)
+    st.sidebar.subheader("New Course Preview")
+    st.sidebar.write(new_course_data)
+
+    if st.sidebar.button("Add Course"):
+        # In a real app, this would update the courses data
+        st.sidebar.success(f"New course added: {new_course_title}")
+
 # Streamlit app
 def main():
     st.set_page_config(
@@ -228,7 +262,7 @@ def main():
 
     # Sidebar for interactive options
     st.sidebar.title("Interactive Options")
-    selected_option = st.sidebar.radio("Select an option", ["Home", "Take Quiz", "Secure Login", "Enroll"])
+    selected_option = st.sidebar.radio("Select an option", ["Home", "Take Quiz", "Secure Login", "Enroll", "Add Course"])
 
     # Handle selected options
     if selected_option == "Home":
@@ -247,6 +281,9 @@ def main():
 
     elif selected_option == "Enroll":
         enroll_user()
+
+    elif selected_option == "Add Course":
+        add_new_course()
 
 if __name__ == "__main__":
     main()
