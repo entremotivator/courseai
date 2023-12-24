@@ -1,7 +1,4 @@
 import streamlit as st
-import pandas as pd
-from faker import Faker
-from hashlib import sha256
 
 # Sample data for a single course with 10 chapters
 course_data = {
@@ -53,7 +50,7 @@ def display_course(course):
     st.write("---")
 
 # Function to display individual chapter details
-def display_chapter(chapter, progress, user):
+def display_chapter(chapter, progress):
     st.title(chapter["title"])
     st.subheader("Chapter Video")
     st.video(chapter["video_url"])
@@ -72,10 +69,6 @@ def display_chapter(chapter, progress, user):
     if progress is not None:
         st.subheader("Your Progress")
         st.progress(progress)
-
-    # Discussion Forum
-    st.subheader("Discussion Forum")
-    show_comments(chapter["title"], user)
 
 # Function to display quiz for a course
 def display_quiz(course_title, quiz_data, user_answers):
@@ -126,10 +119,6 @@ def display_quiz(course_title, quiz_data, user_answers):
     st.table(leaderboard)
     st.write("---")
 
-    # Save user quiz answers
-    user_answers[course_title] = correct_answers
-    return user_answers
-
 # Function to simulate user progress
 def get_user_progress():
     # In a real app, this would come from a user account system and database
@@ -139,25 +128,6 @@ def get_user_progress():
         "Final Project": 0.0,
     }
 
-# Function to display discussion forum
-def show_comments(chapter_title, user):
-    comments = st.expander("Comments", expanded=True)
-    new_comment = comments.text_input("Add your comment", key=f"{chapter_title}_{user}")
-    if new_comment:
-        comments.markdown(f"{user}: {new_comment}")
-
-# Function to simulate user registration and login
-def login_simulation():
-    fake = Faker()
-    username = fake.user_name()
-    password = fake.password()
-
-    st.sidebar.subheader("User Login")
-    st.sidebar.text_input("Username", value=username, key="username", disabled=True)
-    st.sidebar.text_input("Password", value=password, key="password", disabled=True)
-
-    return username
-
 # Streamlit app
 def main():
     st.set_page_config(
@@ -165,9 +135,6 @@ def main():
         page_icon=":snake:",
         layout="wide",
     )
-
-    # Simulate user registration and login
-    user = login_simulation()
 
     # Get user data (simulated for demonstration purposes)
     user_progress = get_user_progress()
@@ -184,11 +151,12 @@ def main():
     if selected_option == "Home":
         st.title("Course Chapters")
         for chapter in course_data["chapters"]:
-            display_chapter(chapter, user_progress.get(chapter["title"]), user)
+            display_chapter(chapter, user_progress.get(chapter["title"]))
 
     elif selected_option == "Take Quiz":
         selected_chapter = st.sidebar.selectbox("Select a chapter for the quiz", course_data["chapters"])
-        user_quiz_answers = display_quiz(selected_chapter, quiz_data_python_course, user_quiz_answers)
+        user_answers = user_quiz_answers.get(selected_chapter, {})
+        display_quiz(selected_chapter, quiz_data_python_course, user_answers)
 
 if __name__ == "__main__":
     main()
