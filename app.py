@@ -1,6 +1,6 @@
 import streamlit as st
-from faker import Faker
 import hashlib
+import random
 
 # Sample data for a single course with 10 chapters
 course_data = {
@@ -41,6 +41,19 @@ quiz_data_python_course = {
         {"question": "How to submit the final project?", "options": ["A", "B", "C", "D"], "answer": "B"},
     ],
 }
+
+# Simulated database for user accounts
+user_database = {
+    "john_doe": {"password": hashlib.sha256("password123".encode()).hexdigest(), "enrolled_courses": []},
+    "jane_smith": {"password": hashlib.sha256("securepass".encode()).hexdigest(), "enrolled_courses": []},
+    # Add more users and hashed passwords
+}
+
+# Function to generate a random username
+def generate_random_username():
+    adjectives = ["Happy", "Smart", "Creative", "Adventurous", "Friendly"]
+    nouns = ["Coder", "Explorer", "Dreamer", "Enthusiast", "Champion"]
+    return f"{random.choice(adjectives)}_{random.choice(nouns)}"
 
 # Function to display course details
 def display_course(course):
@@ -147,34 +160,53 @@ def show_comments(chapter_title, user):
 
 # Function to simulate user registration and login
 def login_simulation():
-    fake = Faker()
-    username = fake.user_name()
-    password = fake.password()
-
     st.sidebar.subheader("User Login")
-    st.sidebar.text_input("Username", value=username, key="username", disabled=True)
-    st.sidebar.text_input("Password", value=password, key="password", disabled=True)
+    username = st.sidebar.text_input("Username")
+    password = st.sidebar.text_input("Password", type="password")
 
-    return username
+    if st.sidebar.button("Login"):
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        if username in user_database and hashed_password == user_database[username]["password"]:
+            st.sidebar.success(f"Welcome, {username}!")
+            return username
+        else:
+            st.sidebar.error("Invalid username or password. Please try again.")
 
-# Function to simulate user registration and login with hashed password
+    st.sidebar.subheader("Don't have an account?")
+    if st.sidebar.button("Register"):
+        new_user = generate_random_username()
+        new_password = "securepassword"  # Simulated registration with a default password
+        hashed_new_password = hashlib.sha256(new_password.encode()).hexdigest()
+        user_database[new_user] = {"password": hashed_new_password, "enrolled_courses": []}
+        st.sidebar.success(f"Account created for {new_user}. You can now log in.")
+    
+    return None
+
+# Function to simulate secure login
 def secure_login_simulation():
-    fake = Faker()
-    username = fake.user_name()
-    password = fake.password()
+    st.sidebar.subheader("Secure User Login")
+    secure_user = st.sidebar.text_input("Username")
+    secure_password = st.sidebar.text_input("Password", type="password")
 
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    if st.sidebar.button("Login"):
+        if secure_user in user_database and user_database[secure_user]["password"] == hashlib.sha256(secure_password.encode()).hexdigest():
+            st.sidebar.success(f"Secure login successful. Welcome, {secure_user}!")
+            return secure_user
+        else:
+            st.sidebar.error("Invalid username or password. Please try again.")
+    
+    return None
 
-    st.sidebar.subheader("User Login (Secure)")
-    st.sidebar.text_input("Username", value=username, key="username", disabled=True)
-    st.sidebar.text_input("Password", value=hashed_password, key="password", disabled=True)
-
-    return username
-
-# Function to display course enrollment
+# Function to simulate user enrollment in a course
 def enroll_user():
-    st.sidebar.subheader("Enroll in Course")
-    st.sidebar.button("Enroll Now")
+    st.sidebar.subheader("Enroll in a Course")
+    available_courses = [course["title"] for course in course_data["chapters"]]
+    selected_course = st.sidebar.selectbox("Select a course", available_courses)
+
+    if st.sidebar.button("Enroll"):
+        # In a real app, this would update the user's data in the database
+        st.sidebar.success(f"You are now enrolled in the course: {selected_course}.")
+        user_database[user]["enrolled_courses"].append(selected_course)
 
 # Streamlit app
 def main():
@@ -218,4 +250,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
