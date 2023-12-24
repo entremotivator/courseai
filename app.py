@@ -42,8 +42,7 @@ def display_quiz(course_title):
     questions = quiz_data.get(course_title, [])
     for i, question_data in enumerate(questions):
         st.sidebar.subheader(f"Question {i + 1}")
-        st.sidebar.write(question_data["question"])
-        user_answer = st.sidebar.radio("Options", question_data["options"])
+        user_answer = st.sidebar.radio(f"Options_{i}", question_data["options"])
         st.sidebar.write(f"Your answer: {user_answer}")
         st.sidebar.write(f"Correct answer: {question_data['answer']}")
         st.sidebar.write("---")
